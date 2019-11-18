@@ -2,4 +2,4 @@
 
 Projektna naloga pri predmetu Podatkovne baze
 
-![ER diagram](slika.PNG)
+![ER diagram](diagram.png)
