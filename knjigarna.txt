@@ -1,0 +1,64 @@
+CREATE TABLE izvod (
+    id INTEGER PRIMARY KEY, 
+    knjiga INTEGER REFERENCES knjiga(id), 
+    založba INTEGER REFERENCES založba(id), 
+    št_strani INTEGER, 
+    leto INTEGER, 
+    cena REAL,
+    vezava TEXT REFERENCES vezava(oznaka),
+    jezik INTEGER REFERENCES jezik(id)
+)
+
+CREATE TABLE pripada (
+    knjiga INTEGER REFERENCES izvod(id),
+    oseba INTEGER REFERENCES oseba(id),
+    tip CHARACTER CHECK (tip IN ('O', 'P'))
+)
+
+
+CREATE TABLE oseba (
+    id INTEGER PRIMARY KEY,
+    ime TEXT,
+    življenjepis TEXT
+)
+
+CREATE TABLE knjiga (
+    id INTEGER PRIMARY KEY,
+    naslov TEXT,
+    žanr INTEGER REFERENCES žanr(id),
+    opis TEXT
+)
+
+CREATE TABLE žanr (
+    id INTEGER,
+    ime TEXT
+)
+
+CREATE TABLE jezik (
+    id INTEGER,
+    jezik TEXT
+)
+
+CREATE TABLE založba (
+    id INTEGER,
+    ime TEXT
+)
+
+CREATE TABLE vezava (
+    oznaka CHARACTER CHECK (tip IN ('T', 'M', 'S')),
+    vezano TEXT
+)
+
+CREATE TABLE uporabnik (
+    id INTEGER,
+    ime TEXT,
+    email TEXT 
+)
+
+CREATE TABLE je_ocenil (
+    id_knjige INTEGER REFERENCES knjiga(id),
+    ocena INTEGER,
+    komentar TEXT,
+    čas DATE,
+    uporabnik INTEGER REFERENCES uporabnik(id) 
+)
