@@ -10,8 +10,8 @@ BEGIN TRANSACTION;
 CREATE TABLE izdaja (
     id INTEGER PRIMARY KEY, 
     knjiga INTEGER REFERENCES knjiga(id), 
-    zalo�ba INTEGER REFERENCES zalo�ba(id), 
-    �t_strani INTEGER, 
+    zalozba INTEGER REFERENCES zalozba(id), 
+    st_strani INTEGER, 
     leto INTEGER, 
     cena REAL,
     vezava CHARACTER CHECK (vezava IN ('T', 'M', 'S')),
@@ -43,7 +43,7 @@ CREATE TABLE vezava (
 CREATE TABLE knjiga (
     id INTEGER PRIMARY KEY,
     naslov TEXT,
-    �anr INTEGER REFERENCES �anr(id),
+    zanr INTEGER REFERENCES zanr(id),
     opis TEXT
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE knjiga (
 CREATE TABLE oseba (
     id INTEGER PRIMARY KEY,
     ime TEXT,
-    �ivljenjepis TEXT
+    zivljenjepis TEXT
 );
 
 -- Table: pripada
@@ -70,13 +70,13 @@ CREATE TABLE uporabnik (
 
 
 -- Table: zalo�ba
-CREATE TABLE zalo�ba (
+CREATE TABLE zalozba (
     id INTEGER,
     ime TEXT
 );
 
 -- Table: �anr
-CREATE TABLE �anr (
+CREATE TABLE zanr (
     id INTEGER REFERENCES knjiga(id),
     ime TEXT
 );
