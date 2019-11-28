@@ -1,21 +1,57 @@
 --
--- File generated with SQLiteStudio v3.0.3 on pon. nov. 18 10:49:29 2019
+-- File generated with SQLiteStudio v3.2.1 on cet. nov. 28 09:16:01 2019
 --
--- Text encoding used: UTF-8
+-- Text encoding used: System
 --
 PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
--- Table: izvod
-CREATE TABLE izvod (
+-- Table: izdaja
+CREATE TABLE izdaja (
     id INTEGER PRIMARY KEY, 
     knjiga INTEGER REFERENCES knjiga(id), 
-    založba INTEGER REFERENCES založba(id), 
-    št_strani INTEGER, 
+    zalozba INTEGER REFERENCES zalozba(id), 
+    st_strani INTEGER, 
     leto INTEGER, 
     cena REAL,
-    vezava TEXT REFERENCES vezava(oznaka),
+    vezava CHARACTER CHECK (vezava IN ('T' 'M', 'S')),
     jezik INTEGER REFERENCES jezik(id)
+);
+
+-- Table: je_ocenil
+CREATE TABLE je_ocenil (
+    id_knjige INTEGER REFERENCES knjiga(id),
+    ocena INTEGER,
+    komentar TEXT,
+    cas DATE,
+    uporabnik INTEGER REFERENCES uporabnik(id) 
+);
+
+-- Table: jezik
+CREATE TABLE jezik (
+    id INTEGER,
+    jezik TEXT
+);
+
+-- Table: vezava
+CREATE TABLE vezava (
+    id  INTEGER PRIMARY KEY,
+    ime TEXT
+);
+
+-- Table: knjiga
+CREATE TABLE knjiga (
+    id INTEGER PRIMARY KEY,
+    naslov TEXT,
+    zanr INTEGER REFERENCES zanr(id),
+    opis TEXT
+);
+
+-- Table: oseba
+CREATE TABLE oseba (
+    id INTEGER PRIMARY KEY,
+    ime TEXT,
+    zivljenjepis TEXT
 );
 
 -- Table: pripada
@@ -25,45 +61,6 @@ CREATE TABLE pripada (
     tip CHARACTER CHECK (tip IN ('O', 'P'))
 );
 
--- Table: oseba
-CREATE TABLE oseba (
-    id INTEGER PRIMARY KEY,
-    ime TEXT,
-    življenjepis TEXT
-);
-
--- Table: oseba
-CREATE TABLE oseba (
-    id  INTEGER PRIMARY KEY,
-    ime TEXT
-);
-
--- Table: knjiga
-CREATE TABLE knjiga (
-    id INTEGER PRIMARY KEY,
-    naslov TEXT,
-    žanr INTEGER REFERENCES žanr(id),
-    opis TEXT
-);
-
--- Table: jezik
-CREATE TABLE jezik (
-    id INTEGER,
-    jezik TEXT
-);
-
--- Table: založba
-CREATE TABLE založba (
-    id INTEGER,
-    ime TEXT
-);
-
--- Table: vezava
-CREATE TABLE vezava (
-    oznaka CHARACTER CHECK (tip IN ('T', 'M', 'S')),
-    vezano TEXT
-);
-
 -- Table: uporabnik
 CREATE TABLE uporabnik (
     id INTEGER,
@@ -71,14 +68,17 @@ CREATE TABLE uporabnik (
     email TEXT 
 );
 
--- Table: je_ocenil
-CREATE TABLE je_ocenil (
-    id_knjige INTEGER REFERENCES knjiga(id),
-    ocena INTEGER,
-    komentar TEXT,
-    čas DATE,
-    uporabnik INTEGER REFERENCES uporabnik(id) 
+-- Table: zalozba
+CREATE TABLE zalozba (
+    id INTEGER,
+    ime TEXT
 );
 
+-- Table: zanr
+CREATE TABLE zanr (
+    id INTEGER REFERENCES knjiga(id),
+    ime TEXT
+);
 
 COMMIT TRANSACTION;
+PRAGMA foreign_keys = on;
