@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.2.1 on cet. nov. 28 09:16:01 2019
+-- File generated with SQLiteStudio v3.2.1 on cet. nov. 28 09:26:46 2019
 --
 -- Text encoding used: System
 --
@@ -10,11 +10,11 @@ BEGIN TRANSACTION;
 CREATE TABLE izdaja (
     id INTEGER PRIMARY KEY, 
     knjiga INTEGER REFERENCES knjiga(id), 
-    zalozba INTEGER REFERENCES zalozba(id), 
-    st_strani INTEGER, 
+    zalo�ba INTEGER REFERENCES zalo�ba(id), 
+    �t_strani INTEGER, 
     leto INTEGER, 
     cena REAL,
-    vezava CHARACTER CHECK (vezava IN ('T' 'M', 'S')),
+    vezava CHARACTER CHECK (vezava IN ('T', 'M', 'S')),
     jezik INTEGER REFERENCES jezik(id)
 );
 
@@ -43,7 +43,7 @@ CREATE TABLE vezava (
 CREATE TABLE knjiga (
     id INTEGER PRIMARY KEY,
     naslov TEXT,
-    zanr INTEGER REFERENCES zanr(id),
+    �anr INTEGER REFERENCES �anr(id),
     opis TEXT
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE knjiga (
 CREATE TABLE oseba (
     id INTEGER PRIMARY KEY,
     ime TEXT,
-    zivljenjepis TEXT
+    �ivljenjepis TEXT
 );
 
 -- Table: pripada
@@ -68,14 +68,15 @@ CREATE TABLE uporabnik (
     email TEXT 
 );
 
--- Table: zalozba
-CREATE TABLE zalozba (
+
+-- Table: zalo�ba
+CREATE TABLE zalo�ba (
     id INTEGER,
     ime TEXT
 );
 
--- Table: zanr
-CREATE TABLE zanr (
+-- Table: �anr
+CREATE TABLE �anr (
     id INTEGER REFERENCES knjiga(id),
     ime TEXT
 );
