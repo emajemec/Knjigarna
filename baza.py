@@ -1,6 +1,12 @@
 import csv
 
 class Tabela:
+    '''Razred. ki predstavlja tabelo v bazi.
+    Polja razreda:
+    - ime: ime tabele
+    - podatki: datoteka s podatki ali None
+    id: stolpec z lastnostjo AUTOINCREMENT ali None
+    '''
     ime = None
     podatki = None
     id = None
