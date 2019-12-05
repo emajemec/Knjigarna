@@ -83,15 +83,16 @@ class Tabela:
 
 class Zanr(Tabela):
     '''Tabela za žanre'''
-    ime = "zanr"
+    name = "zanr"
     id = "id"
 
     def ustvari(self):
         '''Ustvari tabelo žanr'''
         self.conn.execute("""
             CREATE TABLE zanr (
-                id    INTEGER PRIMARY KEY AUTOINCREMENT,
-                naziv TEXT
+                id INTEGER REFERENCES knjiga(id),
+                ime TEXT
+                );
             );
         """)
 
@@ -100,7 +101,7 @@ class Zanr(Tabela):
         Če žanr že obstaja, vrne obstoječ ID'''
         cur = self.conn.execute("""
             SELECT id FROM zanr
-            WHERE naziv = ?;
+            WHERE ime = ?;
         """, podatki)
         r = cur.fetchone() 
         '''vrne eno vrstico'''
@@ -112,26 +113,28 @@ class Zanr(Tabela):
             return id
 
 
-class Oznaka(Tabela):
-    ime = "oznaka"
+class Zalozba(Tabela):
+    name = 'zalozba'
 
     def ustvari(self):
         self.conn.execute("""
-            CREATE TABLE oznaka (
-                kratica TEXT PRIMARY KEY
+        CREATE TABLE zalozba (
+            id INTEGER,
+            ime TEXT
             );
         """)
 
+
     def dodaj_vrstico(self, podatki, poizvedba=None):
         cur = self.conn.execute("""
-            SELECT kratica FROM oznaka
-            WHERE kratica = ?;
+            SELECT id FROM zalozba
+            WHERE ime = ?;
         """, podatki)
         r = cur.fetchone()
         if r is None:
             super().dodaj_vrstico(podatki, poizvedba)
 
-
+##na koncu
 class Film(Tabela):
     '''Tabela za filme'''
     ime = "film"
@@ -190,48 +193,49 @@ class Film(Tabela):
         super().dodaj_vrstico(podatki, poizvedba)
 
 
+#koncano
 class Oseba(Tabela):
     '''tabela za osebe'''
-    ime = "oseba"
+    name = "oseba"
     podatki = "podatki/oseba.csv"
 
     def ustvari(self):
         '''ustvari tabelo tabela'''
         self.conn.execute("""
             CREATE TABLE oseba (
-                id  INTEGER PRIMARY KEY,
-                ime TEXT
-            );
+                id INTEGER PRIMARY KEY,
+                ime TEXT,
+                zivljenjepis TEXT
+);
         """)
 
 
-class Vloga(Tabela):
-    '''tabela za vloge'''
-    ime = "vloga"
-    podatki = "podatki/vloga.csv"
+
+
+
+##koncano
+
+class Uporabnik(Tabela):
+    '''tabela za uporabnike'''
+    name = "uporabnik"
+    podatki = "podatki/uporabnik.csv"
 
     def ustvari(self):
-        '''ustvari tabelo vloga'''
+        '''ustvari tabelo uporabnik'''
         self.conn.execute("""
-            CREATE TABLE vloga (
-                film  INTEGER   REFERENCES film (id),
-                oseba INTEGER   REFERENCES oseba (id),
-                tip   CHARACTER CHECK (tip IN ('I',
-                                'R') ),
-                mesto INTEGER,
-                PRIMARY KEY (
-                    film,
-                    oseba,
-                    tip
-                )
+            CREATE TABLE uporabnik (
+                id INTEGER,
+                ime TEXT,
+                email TEXT 
             );
-        """)
+        """) 
 
 
+#koncano
 class Pripada(Tabela):
     '''tabela za relacijo pripadnosti filma žanru'''
-    ime = "pripada"
-    podatki = "podatki/zanr.csv"
+    name = "pripada"
+    podatki = "podatki/oseba.csv"
 
     def __init__(self, conn, zanr):
         '''konstruktor tabele pripadnosti žanru
@@ -239,31 +243,27 @@ class Pripada(Tabela):
         -conn: povezava na bazo
         -zanr: tabela za žanre'''
         super().__init__(conn)
-        self.zanr = zanr
+        self.oseba = oseba
 
     def ustvari(self):
-        '''ustvarimo tabelo žanrov'''
+        '''ustvarimo tabelo pripada '''
         self.conn.execute("""
-            CREATE TABLE pripada (
-                film INTEGER REFERENCES film (id),
-                zanr INTEGER REFERENCES zanr (id),
-                PRIMARY KEY (
-                    film,
-                    zanr
-                )
+            knjiga INTEGER REFERENCES izvod(id),
+                oseba INTEGER REFERENCES oseba(id),
+                tip CHARACTER CHECK (tip IN ('O', 'P'))
             );
         """)
-
+    #koncano
     def uvozi(self, encoding="UTF-8"):
-        '''uvozi pripadnosti filmov in pripadajoče žanre'''
-        insert = self.zanr.dodajanje(["naziv"])
+        '''uvozi pripadnosti filmov in pripadajoče osebe'''
+        insert = self.oseba.dodajanje(["naziv"])
         super().uvozi(encoding=encoding, insert=insert)
 
     @staticmethod
     def pretvori(stolpci, kwargs):
         '''spremeni ime stolpca z žanrom in si zapomni njegov indeks'''
-        naziv = kwargs["naziv"] = stolpci.index("naziv")
-        stolpci[naziv] = "zanr"
+        ime = kwargs["ime"] = stolpci.index("ime")
+        stolpci[ime] = "oseba"
         return stolpci
 
     def dodaj_vrstico(self, podatki, poizvedba=None, insert=None, naziv=None):
@@ -274,10 +274,10 @@ class Pripada(Tabela):
         -insert: poizvedba za dodajanje žanra
         -oznaka: indeks stolpca z žanrom'''
 
-        assert naziv is not None
+        assert ime is not None
         if insert is None:
-            insert = self.zanr.dodajanje(["naziv"])
-        podatki[naziv] = self.zanr.dodaj_vrstico([podatki[naziv]], insert)
+            insert = self.oseba.dodajanje(["ime"])
+        podatki[ime] = self.oseba.dodaj_vrstico([podatki[ime]], insert)
         super().dodaj_vrstico(podatki, poizvedba)
 
 
