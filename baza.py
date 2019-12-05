@@ -84,7 +84,7 @@ class Tabela:
 class Je_ocenil(Tabela):
     '''tabela za ocene'''
     name = Je_ocenil
-    podatki = podatki = "podatki/je_ocenil.csv"
+    podatki = "podatki/je_ocenil.csv"
 
         def ustvari(self):
         '''Ustvari tabelo je_ocenil'''
@@ -145,6 +145,21 @@ class Jezik(Tabela):
         """)
 
 ###tabela knjig
+class Knjiga(Tabela):
+    '''tabela knjig'''
+    name = 'knjiga'
+    podatki = "podatki/knjiga.csv"
+
+    def ustvari(self):
+        '''Ustvari tabelo jezikov'''
+        self.conn.execute("""
+            CREATE TABLE knjiga (
+                id INTEGER PRIMARY KEY,
+                naslov TEXT,
+                zanr INTEGER REFERENCES zanr(id),
+                opis TEXT
+            );
+        """)
 
 class Vezava(Tabela):
     '''tabela vezav'''
