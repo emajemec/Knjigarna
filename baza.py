@@ -81,6 +81,23 @@ class Tabela:
             return cur.lastrowid
 
 
+class Je_ocenil(Tabela):
+    '''tabela za ocene'''
+    name = Je_ocenil
+    podatki = podatki = "podatki/je_ocenil.csv"
+
+        def ustvari(self):
+        '''Ustvari tabelo je_ocenil'''
+        self.conn.execute("""
+            CREATE TABLE je_ocenil (
+                id_knjige INTEGER REFERENCES knjiga(id),
+                ocena INTEGER,
+                komentar TEXT,
+                cas DATE,
+                uporabnik INTEGER REFERENCES uporabnik(id) 
+            );
+        """)
+##koncano
 class Zanr(Tabela):
     '''Tabela za žanre'''
     name = "zanr"
@@ -113,6 +130,37 @@ class Zanr(Tabela):
             return id
 
 
+class Jezik(Tabela):
+    '''tabela za jezik knjige'''
+    name = 'jezik'
+    id = 'id'
+
+    def ustvari(self):
+        '''Ustvari tabelo jezikov'''
+        self.conn.execute("""
+            CREATE TABLE vezava (
+                id  INTEGER PRIMARY KEY,
+                ime TEXT
+            );
+        """)
+
+###tabela knjig
+
+class Vezava(Tabela):
+    '''tabela vezav'''
+    name = 'vezava'
+
+    def ustvari(self):
+        '''Ustvari tabelo vezav'''
+        self.conn.execute("""
+            CREATE TABLE jezik (
+                id INTEGER,
+                jezik TEXT
+            );
+        """)
+
+
+##koncano
 class Zalozba(Tabela):
     name = 'zalozba'
 
@@ -135,10 +183,11 @@ class Zalozba(Tabela):
             super().dodaj_vrstico(podatki, poizvedba)
 
 ##na koncu
-class Film(Tabela):
-    '''Tabela za filme'''
-    ime = "film"
-    podatki = "podatki/film.csv"
+
+class Izvod(Tabela):
+    '''Tabela za izvode knjig'''
+    name = 'izvod'
+    podatki = "podatki/izvod.csv"
 
     def __init__(self, conn, oznaka):
         '''Konstruktor tabele filmov.
@@ -150,19 +199,17 @@ class Film(Tabela):
         self.oznaka = oznaka
 
     def ustvari(self):
-        '''Ustvari tabelo film'''
+        '''Ustvari tabelo izvod'''
         self.conn.execute("""
-            CREATE TABLE film (
-                id        INTEGER PRIMARY KEY,
-                naslov    TEXT,
-                dolzina   INTEGER,
-                leto      INTEGER,
-                ocena     REAL,
-                metascore INTEGER,
-                glasovi   INTEGER,
-                zasluzek  INTEGER,
-                oznaka    TEXT    REFERENCES oznaka (kratica),
-                opis      TEXT
+            CREATE TABLE izdaja (
+                id INTEGER PRIMARY KEY, 
+                knjiga INTEGER REFERENCES knjiga(id), 
+                zalozba INTEGER REFERENCES zalozba(id), 
+                st_strani INTEGER, 
+                leto INTEGER, 
+                cena REAL,
+                vezava CHARACTER CHECK (vezava IN ('T', 'M', 'S')),
+                jezik INTEGER REFERENCES jezik(id)
             );
         """)
 
@@ -256,16 +303,17 @@ class Pripada(Tabela):
     #koncano
     def uvozi(self, encoding="UTF-8"):
         '''uvozi pripadnosti filmov in pripadajoče osebe'''
-        insert = self.oseba.dodajanje(["naziv"])
+        insert = self.oseba.dodajanje(["ime"])
         super().uvozi(encoding=encoding, insert=insert)
 
     @staticmethod
-    def pretvori(stolpci, kwargs):
-        '''spremeni ime stolpca z žanrom in si zapomni njegov indeks'''
-        ime = kwargs["ime"] = stolpci.index("ime")
-        stolpci[ime] = "oseba"
-        return stolpci
+    #def pretvori(stolpci, kwargs):
+        #'''spremeni ime stolpca z žanrom in si zapomni njegov indeks'''
+        #name = kwargs["name"] = stolpci.index("name")
+        #stolpci[ime] = "oseba"
+        #return stolpci
 
+    ## SE NE VE!
     def dodaj_vrstico(self, podatki, poizvedba=None, insert=None, naziv=None):
         '''dodaj pripadnost filma in pripadajoči žanr
         Argumenti:
@@ -274,10 +322,10 @@ class Pripada(Tabela):
         -insert: poizvedba za dodajanje žanra
         -oznaka: indeks stolpca z žanrom'''
 
-        assert ime is not None
+        assert name is not None
         if insert is None:
-            insert = self.oseba.dodajanje(["ime"])
-        podatki[ime] = self.oseba.dodaj_vrstico([podatki[ime]], insert)
+            insert = self.oseba.dodajanje(["name"])
+        podatki[name] = self.oseba.dodaj_vrstico([podatki[name]], insert)
         super().dodaj_vrstico(podatki, poizvedba)
 
 
