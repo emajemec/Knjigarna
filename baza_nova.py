@@ -47,12 +47,7 @@ def ustvari_tabele(conn):
             jezik TEXT
         );
     """)
-    conn.execute("""
-        CREATE TABLE vezava (
-            id  INTEGER PRIMARY KEY,
-            ime TEXT
-        );
-    """)
+    
     conn.execute("""
         CREATE TABLE knjiga (
             id INTEGER PRIMARY KEY,

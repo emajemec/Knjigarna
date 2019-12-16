@@ -198,7 +198,7 @@ class Jezik(Tabela):
             id, = r
             return id
 
-
+'SPREMENI!!!!!!!!!'
 class Oznaka(Tabela):
     """
     Tabela za oznake.
@@ -229,7 +229,7 @@ class Oznaka(Tabela):
         if r is None:
             return super().dodaj_vrstico(podatki, poizvedba)
 
-
+'SPREMENI!!!!!!!!!'
 class Film(Tabela):
     """
     Tabela za filme.
@@ -299,7 +299,7 @@ class Film(Tabela):
                 self.oznaka.dodaj_vrstico([podatki[oznaka]], insert)
         return super().dodaj_vrstico(podatki, poizvedba)
 
-
+'SPREMENI!!!!!!!!!'
 class Oseba(Tabela):
     """
     Tabela za osebe.
@@ -318,7 +318,7 @@ class Oseba(Tabela):
             );
         """)
 
-
+'SPREMENI!!!!!!!!!'
 class Vloga(Tabela):
     """
     Tabela za vloge.
@@ -345,24 +345,24 @@ class Vloga(Tabela):
             );
         """)
 
-
+'ŠE MALO ZA SPREMENIT!!!!!!!!'
 class Pripada(Tabela):
     """
-    Tabela za relacijo pripadnosti filma zalozbau.
+    Tabela za relacijo pripadnosti knjige osebi.
     """
     ime = "pripada"
-    podatki = "podatki/Zalozba.csv"
+    podatki = "podatki/books.csv"
 
-    def __init__(self, conn, Zalozba):
+    def __init__(self, conn, Oseba):
         """
-        Konstruktor tabele pripadnosti zalozbaom.
+        Konstruktor tabele pripadnosti osebam.
 
         Argumenti:
         - conn: povezava na bazo
-        - Zalozba: tabela za zalozbae
+        - Zalozba: tabela za osebe
         """
         super().__init__(conn)
-        self.Zalozba = Zalozba
+        self.Oseba = Oseba
 
     def ustvari(self):
         """
@@ -370,20 +370,17 @@ class Pripada(Tabela):
         """
         self.conn.execute("""
             CREATE TABLE pripada (
-                film INTEGER REFERENCES film (id),
-                Zalozba INTEGER REFERENCES Zalozba (id),
-                PRIMARY KEY (
-                    film,
-                    Zalozba
-                )
+                knjiga INTEGER REFERENCES izvod(id),
+                oseba INTEGER REFERENCES oseba(id),
+                tip CHARACTER CHECK (tip IN ('O', 'P'))
             );
         """)
 
     def uvozi(self, encoding="UTF-8"):
         """
-        Uvozi pripadnosti filmov in pripadajoe zalozbae.
+        Uvozi pripadnosti oseb in pripadajočih knjig.
         """
-        insert = self.Zalozba.dodajanje(["naziv"])
+        insert = self.Oseba.dodajanje(["ime"])
         super().uvozi(encoding=encoding, insert=insert)
 
     @staticmethod
@@ -392,8 +389,8 @@ class Pripada(Tabela):
         Spremeni ime stolpca z zalozbaom
         in si zapomni njegov indeks.
         """
-        naziv = kwargs["naziv"] = stolpci.index("naziv")
-        stolpci[naziv] = "Zalozba"
+        naziv = kwargs["ime"] = stolpci.index("ime")
+        stolpci[naziv] = "Oseba"
         return stolpci
 
     def dodaj_vrstico(self, podatki, poizvedba=None, insert=None, naziv=None):
@@ -408,8 +405,8 @@ class Pripada(Tabela):
         """
         assert naziv is not None
         if insert is None:
-            insert = self.Zalozba.dodajanje(["naziv"])
-        podatki[naziv] = self.Zalozba.dodaj_vrstico([podatki[naziv]], insert)
+            insert = self.Oseba.dodajanje(["ime"])
+        podatki[naziv] = self.Oseba.dodaj_vrstico([podatki[naziv]], insert)
         return super().dodaj_vrstico(podatki, poizvedba)
 
 

@@ -33,11 +33,6 @@ CREATE TABLE jezik (
     ime TEXT
 );
 
--- Table: vezava
-CREATE TABLE vezava (
-    id  INTEGER PRIMARY KEY,
-    ime TEXT
-);
 
 -- Table: knjiga
 CREATE TABLE knjiga (
