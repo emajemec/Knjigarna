@@ -123,7 +123,7 @@ def uvozi_knjiga(conn):
     conn.execute("DELETE FROM zanr;")
     conn.execute("DELETE FROM izvod;")
     conn.execute("DELETE FROM je_ocenil;")
-    with open('podatki/knjiga.csv') as datoteka:
+    with open('podatki/books.csv') as datoteka:
         podatki = csv.reader(datoteka)
         stolpci = next(podatki)
         poizvedba = """
