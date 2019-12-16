@@ -90,7 +90,7 @@ def ustvari_tabele(conn):
     """)
     conn.execute("""
         CREATE TABLE zanr (
-            id INTEGER REFERENCES knjiga(id),
+            id INTEGER PRIMARY KEY,
             ime TEXT
         );
     """)
@@ -106,7 +106,7 @@ def uvozi_izvod(conn):
     conn.execute("DELETE FROM vezava;")
     conn.execute("DELETE FROM jezika;")
     conn.execute("DELETE FROM pripada;")
-    with open('Podatki/izvod.csv') as datoteka:
+    with open('podatki/books.csv') as datoteka:
         podatki = csv.reader(datoteka)
         stolpci = next(podatki)
         poizvedba = """

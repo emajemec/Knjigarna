@@ -29,8 +29,8 @@ CREATE TABLE je_ocenil (
 
 -- Table: jezik
 CREATE TABLE jezik (
-    id INTEGER,
-    jezik TEXT
+    id INTEGER PRIMARY KEY,
+    ime TEXT
 );
 
 -- Table: vezava
@@ -71,13 +71,13 @@ CREATE TABLE uporabnik (
 
 -- Table: zalo�ba
 CREATE TABLE zalozba (
-    id INTEGER,
+    id INTEGER PRIMARY KEY,
     ime TEXT
 );
 
 -- Table: �anr
 CREATE TABLE zanr (
-    id INTEGER REFERENCES knjiga(id),
+    id INTEGER PRIMARY KEY,
     ime TEXT
 );
 
