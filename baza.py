@@ -198,108 +198,85 @@ class Jezik(Tabela):
             id, = r
             return id
 
-'SPREMENI!!!!!!!!!'
-class Oznaka(Tabela):
+class Oseba(Tabela):
     """
-    Tabela za oznake.
+    Tabela oseb.
     """
-    ime = "oznaka"
+    ime = "oseba"
 
     def ustvari(self):
         """
-        Ustvari tabelo oznaka.
+        Ustvari tabelo oseb.
         """
         self.conn.execute("""
-            CREATE TABLE oznaka (
-                kratica TEXT PRIMARY KEY
+            CREATE TABLE oseba (
+                id INTEGER PRIMARY KEY,
+                ime TEXT,
+                zivljenjepis TEXT
             );
         """)
 
     def dodaj_vrstico(self, podatki, poizvedba=None):
         """
-        Dodaj oznako.
+        Dodaj osebo.
 
-        Če oznaka že obstaja, je ne dodamo še enkrat.
+        Če oseba že obstaja, vrne obstoječ ID.
         """
         cur = self.conn.execute("""
-            SELECT kratica FROM oznaka
-            WHERE kratica = ?;
+            SELECT id FROM oseba
+            WHERE ime = ?;
         """, podatki)
         r = cur.fetchone()
         if r is None:
             return super().dodaj_vrstico(podatki, poizvedba)
+        else:
+            id, = r
+            return id
 
-'SPREMENI!!!!!!!!!'
-class Film(Tabela):
+
+'NIMAMO POJMA KAJ JE Z GESLI IN SPLETNIM VMESNIKOM!!!'
+class Uporabnik(Tabela):
     """
-    Tabela za filme.
+    Tabela za uporabnike.
     """
-    ime = "film"
-    podatki = "podatki/film.csv"
-
-    def __init__(self, conn, oznaka):
-        """
-        Konstruktor tabele filmov.
-
-        Argumenti:
-        - conn: povezava na bazo
-        - oznaka: tabela za oznake
-        """
-        super().__init__(conn)
-        self.oznaka = oznaka
+    ime = "uporabnik"
+    ##podatki = "podatki/.csv"
 
     def ustvari(self):
         """
-        Ustavari tabelo film.
+        Ustvari tabelo vloga.
         """
         self.conn.execute("""
-            CREATE TABLE film (
-                id        INTEGER PRIMARY KEY,
-                naslov    TEXT,
-                dolzina   INTEGER,
-                leto      INTEGER,
-                ocena     REAL,
-                metascore INTEGER,
-                glasovi   INTEGER,
-                zasluzek  INTEGER,
-                oznaka    TEXT    REFERENCES oznaka (kratica),
-                opis      TEXT
+            CREATE TABLE uporabnik (
+                id INTEGER,
+                ime TEXT,
+                email TEXT 
             );
         """)
 
-    def uvozi(self, encoding="UTF-8"):
-        """
-        Uvozi podatke o filmih in pripadajoče oznake.
-        """
-        insert = self.oznaka.dodajanje(stevilo=1)
-        super().uvozi(encoding=encoding, insert=insert)
 
-    @staticmethod
-    def pretvori(stolpci, kwargs):
-        """
-        Zapomni si indeks stolpca z oznako.
-        """
-        kwargs["oznaka"] = stolpci.index("oznaka")
-        return stolpci
 
-    def dodaj_vrstico(self, podatki, poizvedba=None, insert=None, oznaka=None):
-        """
-        Dodaj film in pripadajočo oznako.
+class Knjiga(Tabela):
+    """
+    Tabela za knjige.
+    """
+    ime = "knjiga"
+    podatki = "podatki/knjiga.csv" ##poglej podatke
 
-        Argumenti:
-        - podatki: seznam s podatki o filmu
-        - poizvedba: poizvedba za dodajanje filma
-        - insert: poizvedba za dodajanje oznake
-        - oznaka: indeks stolpca z oznako
+    def ustvari(self):
         """
-        if oznaka is not None:
-            if insert is None:
-                insert = self.oznaka.dodajanje(1)
-            if podatki[oznaka] is not None:
-                self.oznaka.dodaj_vrstico([podatki[oznaka]], insert)
-        return super().dodaj_vrstico(podatki, poizvedba)
+        Ustvari tabelo knjiga.
+        """
+        self.conn.execute("""
+            CREATE TABLE knjiga (
+                id INTEGER PRIMARY KEY,
+                naslov TEXT,
+                zanr INTEGER REFERENCES zanr(id),
+                opis TEXT
+            );
+        """)
 
-'SPREMENI!!!!!!!!!'
+
 class Oseba(Tabela):
     """
     Tabela za osebe.
@@ -318,34 +295,9 @@ class Oseba(Tabela):
             );
         """)
 
-'SPREMENI!!!!!!!!!'
-class Vloga(Tabela):
-    """
-    Tabela za vloge.
-    """
-    ime = "vloga"
-    podatki = "podatki/vloga.csv"
 
-    def ustvari(self):
-        """
-        Ustvari tabelo vloga.
-        """
-        self.conn.execute("""
-            CREATE TABLE vloga (
-                film  INTEGER   REFERENCES film (id),
-                oseba INTEGER   REFERENCES oseba (id),
-                tip   CHARACTER CHECK (tip IN ('I',
-                                'R') ),
-                mesto INTEGER,
-                PRIMARY KEY (
-                    film,
-                    oseba,
-                    tip
-                )
-            );
-        """)
 
-'ŠE MALO ZA SPREMENIT!!!!!!!!'
+'SPREMENI GLEDE NA PODATKE!!!!!!!!'
 class Pripada(Tabela):
     """
     Tabela za relacijo pripadnosti knjige osebi.
@@ -353,7 +305,7 @@ class Pripada(Tabela):
     ime = "pripada"
     podatki = "podatki/books.csv"
 
-    def __init__(self, conn, Oseba):
+    def __init__(self, conn, Oseba, Knjiga):
         """
         Konstruktor tabele pripadnosti osebam.
 
@@ -363,6 +315,7 @@ class Pripada(Tabela):
         """
         super().__init__(conn)
         self.Oseba = Oseba
+        self.Knjiga = Knjiga
 
     def ustvari(self):
         """
@@ -372,7 +325,11 @@ class Pripada(Tabela):
             CREATE TABLE pripada (
                 knjiga INTEGER REFERENCES izvod(id),
                 oseba INTEGER REFERENCES oseba(id),
-                tip CHARACTER CHECK (tip IN ('O', 'P'))
+                tip CHARACTER CHECK (tip IN ('O', 'P')),
+                PRIMARY KEY (
+                    knjiga,
+                    oseba
+                )
             );
         """)
 
@@ -381,7 +338,8 @@ class Pripada(Tabela):
         Uvozi pripadnosti oseb in pripadajočih knjig.
         """
         insert = self.Oseba.dodajanje(["ime"])
-        super().uvozi(encoding=encoding, insert=insert)
+        insert1 = self.Knjiga.dodajanje([""])
+        super().uvozi(encoding=encoding, insert=insert, insert=insert1)
 
     @staticmethod
     def pretvori(stolpci, kwargs):
