@@ -95,6 +95,82 @@ class Tabela:
         cur = self.conn.execute(poizvedba, podatki)
         return cur.lastrowid
 
+class Izvod(Tabela):
+    """
+    Tabela izvodov.
+    """
+    ime = "izdaja"
+    podatki = "podatki/izvod.csv"
+
+    def __init__(self, conn, oznaka):
+        """
+        Konstruktor tabele izvodov knjig.
+
+        Argumenti:
+        - conn: povezava na bazo
+        - oznaka: tabela za oznake
+        """
+        super().__init__(conn)
+        self.knjiga = knjiga
+        self.zalozba = zalozba
+
+    def ustvari(self):
+        """
+        Ustavari tabelo izdaja.
+        """
+        self.conn.execute("""
+            CREATE TABLE izdaja (
+                id INTEGER PRIMARY KEY, 
+                knjiga INTEGER REFERENCES knjiga(id), 
+                zalozba INTEGER REFERENCES zalozba(id), 
+                st_strani INTEGER, 
+                leto INTEGER, 
+                cena REAL,
+                vezava CHARACTER CHECK (vezava IN ('T', 'M', 'S')),
+                jezik INTEGER REFERENCES jezik(id)
+            );
+        """)
+
+    def uvozi(self, encoding="UTF-8"):
+        """
+        Uvozi podatke o izdajah in pripadajoče knjige in založbe.
+        """
+        insert1 = self.knjiga.dodajanje(stevilo=1)
+        insert2 = self.zalozba.dodajanje(stevilo=1)
+        super().uvozi(encoding=encoding, insert=insert1)
+        super().uvozi(encoding=encoding, insert=insert2)
+###Uredi glede na podatke!!!
+    @staticmethod
+    def pretvori(stolpci, kwargs):
+        """
+        Zapomni si indeks stolpca s knjigo.
+        """
+        kwargs["knjiga"] = stolpci.index("knjiga")
+        return stolpci
+
+    
+        """
+        Zapomni si indeks stolpca z založbo.
+        """
+        kwargs["založba"] = stolpci.index("založba")
+        return stolpci
+
+    def dodaj_vrstico(self, podatki, poizvedba=None, insert=None, oznaka=None):
+        """
+        Dodaj izdajo in pripadajočo knjigo oz založbo.
+
+        Argumenti:
+        - podatki: seznam s podatki o filmu
+        - poizvedba: poizvedba za dodajanje filma
+        - insert: poizvedba za dodajanje oznake
+        - oznaka: indeks stolpca z oznako
+        """
+        if knjiga is not None:
+            if insert is None:
+                insert = self.knjiga.dodajanje(1)
+            if podatki[oznaka] is not None:
+                self.oznaka.dodaj_vrstico([podatki[oznaka]], insert)
+        return super().dodaj_vrstico(podatki, poizvedba)
 
 class Zanr(Tabela):
     """
