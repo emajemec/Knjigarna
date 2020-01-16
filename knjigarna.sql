@@ -1,80 +1,72 @@
 --
--- File generated with SQLiteStudio v3.2.1 on cet. nov. 28 09:26:46 2019
+-- File generated with SQLiteStudio v3.2.1 on čet. jan. 16 09:54:07 2020
 --
--- Text encoding used: System
+-- Text encoding used: UTF-8
 --
 PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
--- Table: izdaja
-CREATE TABLE izdaja (
-    id INTEGER PRIMARY KEY, 
-    knjiga INTEGER REFERENCES knjiga(id), 
-    zalozba INTEGER REFERENCES zalozba(id), 
-    st_strani INTEGER, 
-    leto INTEGER, 
-    cena REAL,
-    vezava CHARACTER CHECK (vezava IN ('T', 'M', 'S')),
-    jezik INTEGER REFERENCES jezik(id)
-);
+-- Table: avtorji
+DROP TABLE IF EXISTS avtorji;
 
--- Table: je_ocenil
-CREATE TABLE je_ocenil (
-    id_knjige INTEGER REFERENCES knjiga(id),
-    ocena INTEGER,
-    komentar TEXT,
-    cas DATE,
-    uporabnik INTEGER REFERENCES uporabnik(id) 
-);
-
--- Table: jezik
-CREATE TABLE jezik (
-    id INTEGER PRIMARY KEY,
-    ime TEXT
+CREATE TABLE avtorji (
+    id          INTEGER PRIMARY KEY,
+    ime         TEXT,
+    srednje_ime TEXT,
+    priimek     TEXT
 );
 
 
 -- Table: knjiga
+DROP TABLE IF EXISTS knjiga;
+
 CREATE TABLE knjiga (
-    id INTEGER PRIMARY KEY,
-    naslov TEXT,
-    zanr INTEGER REFERENCES zanr(id),
-    opis TEXT
+    id        INTEGER PRIMARY KEY,
+    naslov    TEXT,
+    št_strani INTEGER,
+    ocena     FLOAT,
+    isbn      INTEGER,
+    datum     DATE,
+    zalozba   INTEGER REFERENCES založba (id) 
 );
 
--- Table: oseba
-CREATE TABLE oseba (
-    id INTEGER PRIMARY KEY,
-    ime TEXT,
-    zivljenjepis TEXT
-);
 
 -- Table: pripada
+DROP TABLE IF EXISTS pripada;
+
 CREATE TABLE pripada (
-    knjiga INTEGER REFERENCES izvod(id),
-    oseba INTEGER REFERENCES oseba(id),
-    tip CHARACTER CHECK (tip IN ('O', 'P'))
-);
-
--- Table: uporabnik
-CREATE TABLE uporabnik (
-    id INTEGER,
-    ime TEXT,
-    email TEXT 
+    knjiga INTEGER REFERENCES knjiga (id),
+    avtor  INTEGER REFERENCES avtorji (id) 
 );
 
 
--- Table: zalo�ba
-CREATE TABLE zalozba (
-    id INTEGER PRIMARY KEY,
+-- Table: pripada_zanr
+DROP TABLE IF EXISTS pripada_zanr;
+
+CREATE TABLE pripada_zanr (
+    knjiga INTEGER REFERENCES knjiga (id),
+    zanr   INTEGER REFERENCES zanr (id) 
+);
+
+
+-- Table: založba
+DROP TABLE IF EXISTS založba;
+
+CREATE TABLE založba (
+    id  INTEGER PRIMARY KEY,
     ime TEXT
 );
 
--- Table: �anr
+
+-- Table: zanr
+DROP TABLE IF EXISTS zanr;
+
 CREATE TABLE zanr (
-    id INTEGER PRIMARY KEY,
-    ime TEXT
+    id      INTEGER PRIMARY KEY,
+    ime     TEXT,
+    nadzanr INTEGER REFERENCES zanr (id) 
 );
+
 
 COMMIT TRANSACTION;
 PRAGMA foreign_keys = on;
