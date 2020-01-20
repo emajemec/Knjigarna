@@ -1,5 +1,5 @@
 --
--- File generated with SQLiteStudio v3.2.1 on čet. jan. 16 09:54:07 2020
+-- File generated with SQLiteStudio v3.2.1 on pon. jan. 20 10:30:15 2020
 --
 -- Text encoding used: UTF-8
 --
@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS knjiga;
 CREATE TABLE knjiga (
     id        INTEGER PRIMARY KEY,
     naslov    TEXT,
-    št_strani INTEGER,
+    st_strani INTEGER,
     ocena     FLOAT,
     isbn      INTEGER,
     datum     DATE,
-    zalozba   INTEGER REFERENCES založba (id) 
+    zalozba   INTEGER REFERENCES zalozba (id) 
 );
 
 
@@ -49,10 +49,22 @@ CREATE TABLE pripada_zanr (
 );
 
 
--- Table: založba
-DROP TABLE IF EXISTS založba;
+-- Table: uporabnik
+DROP TABLE IF EXISTS uporabnik;
 
-CREATE TABLE založba (
+CREATE TABLE uporabnik (
+    id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    ime       TEXT    NOT NULL
+                      UNIQUE,
+    zgostitev TEXT    NOT NULL,
+    sol       TEXT    NOT NULL
+);
+
+
+-- Table: zalozba
+DROP TABLE IF EXISTS zalozba;
+
+CREATE TABLE zalozba (
     id  INTEGER PRIMARY KEY,
     ime TEXT
 );
