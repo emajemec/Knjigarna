@@ -49,17 +49,6 @@ CREATE TABLE pripada_zanr (
 );
 
 
--- Table: uporabnik
-DROP TABLE IF EXISTS uporabnik;
-
-CREATE TABLE uporabnik (
-    id        INTEGER PRIMARY KEY AUTOINCREMENT,
-    ime       TEXT    NOT NULL
-                      UNIQUE,
-    zgostitev TEXT    NOT NULL,
-    sol       TEXT    NOT NULL
-);
-
 
 -- Table: zalozba
 DROP TABLE IF EXISTS zalozba;

@@ -1,8 +1,8 @@
-import bottle
-import model
-import random
-from sqlite3 import IntegrityError
 import json
+import random
+import bottle
+from sqlite3 import IntegrityError
+import model
 
 NASTAVITVE = 'nastavitve.json'
 
@@ -94,6 +94,35 @@ def odjava():
     bottle.redirect('/')
 
 
+
+
+
+@bottle.post('/dodaj-osebo/')
+def dodaj_osebo_post():
+    zahtevaj_prijavo()
+    ime = bottle.request.forms.getunicode('ime')
+    if not ime[0].isupper():
+        return bottle.template(
+            'dodaj_osebo.html',
+            napaka='Ime se mora začeti z veliko začetnico!',
+            ime=ime
+        )
+    else:
+        oseba = Oseba(ime)
+        oseba.dodaj_v_bazo()
+        bottle.redirect('/')
+
+
+@bottle.get('/isci/')
+def isci():
+    iskalni_niz = bottle.request.query.getunicode('iskalni_niz')
+    osebe = Oseba.poisci(iskalni_niz)
+    return bottle.template(
+        'rezultati_iskanja.html',
+        iskalni_niz=iskalni_niz,
+        osebe=osebe
+    )
+
 @bottle.get('/')
 def zacetna_stran():
     st_knjig = model.stevilo_knjig()
@@ -103,5 +132,4 @@ def zacetna_stran():
         st_knjig=st_knjig
     )
 
-bottle.run(reloader=True, debug=True)
-
+bottle.run(debug=True, reloader=True)

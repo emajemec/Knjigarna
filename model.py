@@ -1,8 +1,13 @@
+
+import baza
 import sqlite3
 from geslo import sifriraj_geslo, preveri_geslo
-import naredi_bazo
 
-conn = sqlite3.connect('knjigarna.db')
+
+def stevilo_knjig():
+    sql = 'SELECT COUNT(*) FROM knjiga'
+    (st_knjig,) = conn.execute(sql).fetchone()
+    return st_knjig
 
 def seznam_knjig():
     knjige = []
@@ -11,10 +16,11 @@ def seznam_knjig():
         knjige.append(naslov)
     return knjige
 
-def stevilo_knjig():
-    sql = 'SELECT COUNT(*) FROM knjiga'
-    (st_knjig,) = conn.execute(sql).fetchone()
-    return st_knjig
+conn = sqlite3.connect('knjigarna.db')
+baza.ustvari_bazo_ce_ne_obstaja(conn)
+conn.execute('PRAGMA foreign_keys = ON')
+
+uporabnik = baza.pripravi_tabele(conn)
 
 class LoginError(Exception):
     """
@@ -22,12 +28,11 @@ class LoginError(Exception):
     """
     pass
 
-
 class Uporabnik:
     """
     Razred za uporabnika.
     """
-    uporabnik = naredi_bazo.Uporabnik()
+
     insert = uporabnik.dodajanje(["ime", "zgostitev", "sol"])
 
     def __init__(self, ime, id=None):
