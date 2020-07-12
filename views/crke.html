@@ -1,0 +1,10 @@
+% rebase('osnova.html')
+<h2>Knjige na črko {{crka}}</h2>
+
+<ul>
+    % for knjiga in knjige:
+    <li>
+        {{knjiga.naslov[0]}} 
+    </li>
+    % end
+</ul>

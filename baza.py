@@ -113,6 +113,8 @@ class Tabela:
         cur = self.conn.execute(poizvedba, podatki)
         return cur.lastrowid
 
+
+
 class Uporabnik(Tabela):
     """
     Tabela za uporabnike.
@@ -151,6 +153,7 @@ class Uporabnik(Tabela):
         if sol is not None and zgostitev is not None and podatki[sol] is None:
             podatki[zgostitev], podatki[sol] = sifriraj_geslo(podatki[zgostitev])
         return super().dodaj_vrstico(podatki, poizvedba)
+
 
 def ustvari_tabele(tabele):
     """

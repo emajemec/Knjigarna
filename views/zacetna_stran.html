@@ -1,13 +1,37 @@
 <h1>MATEMATIČNI KNJIGOLJUB</h1>
 <div>
+    % if ime:
+        Prijavljen uporabnik: {{ime}}
+        (<a href="/odjava/">odjava</a>)
+    % else:
     <a href="/prijava/">prijava</a> | 
     <a href="/vpis/">vpis</a>
-</div>
-<p>Število vseh knjig je {{st_knjig}}.</p>
-<ol>
-    % for knjiga in knjige:
-    <li>{{knjiga}}</li>
     % end
-</ol>
+</div>
+<form action="/isci/">
+    <div class="field">
+        <label class="label">Iskalni niz</label>
+        <div class="control">
+            <input class="input" type="text" placeholder="npr. Python or Life in Code" name="iskalni_niz">
+        </div>
+    </div>
+
+    <div class="field">
+        <div class="control">
+            <button class="button">Išči!</button>
+        </div>
+</form>
+<p>Število vseh knjig je {{st_knjig}}.</p>
+<ul>
+    % for crka in znaki:
+    <li>
+        Knjige, ki se začnejo s črko
+        <a href="/crke/{{crka}}/">{{crka}}</a>
+    </li>
+    % end
+</ul>
+
+
+
 
 

@@ -2,7 +2,7 @@ import json
 import random
 import bottle
 from sqlite3 import IntegrityError
-import model
+from model import Uporabnik, LoginError, Knjiga
 
 NASTAVITVE = 'nastavitve.json'
 
@@ -97,39 +97,33 @@ def odjava():
 
 
 
-@bottle.post('/dodaj-osebo/')
-def dodaj_osebo_post():
-    zahtevaj_prijavo()
-    ime = bottle.request.forms.getunicode('ime')
-    if not ime[0].isupper():
-        return bottle.template(
-            'dodaj_osebo.html',
-            napaka='Ime se mora začeti z veliko začetnico!',
-            ime=ime
-        )
-    else:
-        oseba = Oseba(ime)
-        oseba.dodaj_v_bazo()
-        bottle.redirect('/')
-
-
 @bottle.get('/isci/')
 def isci():
     iskalni_niz = bottle.request.query.getunicode('iskalni_niz')
-    osebe = Oseba.poisci(iskalni_niz)
+    knjige = Knjiga.poisci_knjigo(iskalni_niz)
     return bottle.template(
         'rezultati_iskanja.html',
         iskalni_niz=iskalni_niz,
-        osebe=osebe
+        knjige=knjige
+    )
+
+@bottle.get('/crke/<crka>/')
+def uredi_po_crkah(crka):
+    return bottle.template(
+        'crke.html',
+        crka = crka,
+        knjige = Knjiga.po_crkah(crka)
     )
 
 @bottle.get('/')
 def zacetna_stran():
-    st_knjig = model.stevilo_knjig()
+    st_knjig = Knjiga.stevilo_knjig()
+    
     return bottle.template(
         'zacetna_stran.html',
-        knjige=model.seznam_knjig(),
-        st_knjig=st_knjig
+        st_knjig=st_knjig,
+        ime=bottle.request.get_cookie('uporabnik', secret=SKRIVNOST),
+        znaki = Knjiga.tab_crk()
     )
 
 bottle.run(debug=True, reloader=True)

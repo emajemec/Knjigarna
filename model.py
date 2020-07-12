@@ -1,20 +1,8 @@
 
+from pomozne_funkcije import Seznam
 import baza
 import sqlite3
 from geslo import sifriraj_geslo, preveri_geslo
-
-
-def stevilo_knjig():
-    sql = 'SELECT COUNT(*) FROM knjiga'
-    (st_knjig,) = conn.execute(sql).fetchone()
-    return st_knjig
-
-def seznam_knjig():
-    knjige = []
-    sql = 'SELECT naslov, st_strani FROM knjiga'
-    for naslov, st_strani in conn.execute(sql):
-        knjige.append(naslov)
-    return knjige
 
 conn = sqlite3.connect('knjigarna.db')
 baza.ustvari_bazo_ce_ne_obstaja(conn)
@@ -78,3 +66,74 @@ class Uporabnik:
                 [self.ime, zgostitev, sol],
                 self.insert
             )
+class Avtorji:
+    def __init__(self, ime, priimek, id = None):
+        """Konstruktor avtorjev"""
+        self.ime = ime
+        self.priimek = priimek
+
+    def __str__(self):
+        """ Znakovna predstavitev avtorja, njegov ime in priimek. """
+        return self.ime + " " + self.priimek
+
+
+class Knjiga:
+
+    def __init__(self, naslov, id=None):
+        """
+        Konstruktor knjig.
+        """
+        self.id = id
+        self.naslov = naslov
+
+    def __str__(self):
+        """
+        Znakovna predstavitev knjige.
+
+        Vrne naslov knjige.
+        """
+        return self.naslov
+
+    
+    @staticmethod
+    def po_crkah(crka):
+        
+        '''Vrne knjige na isto črko. '''
+        sql = """SELECT naslov
+                FROM knjiga
+                WHERE naslov LIKE ? """
+        for naslov in conn.execute(sql, [crka + '%']):
+            yield Knjiga(naslov = naslov)
+            
+
+    @staticmethod
+    def tab_crk():
+        "Vrne niz zacetnic knjig"
+        tab = []
+        sql = """SELECT SUBSTR(naslov, 1, 1) 
+                FROM knjiga
+                GROUP BY SUBSTR(naslov, 1, 1);"""
+        for crka in conn.execute(sql):
+            tab.append(crka[0])
+        return tab
+
+    @staticmethod
+    def stevilo_knjig():
+        sql = 'SELECT COUNT(*) FROM knjiga'
+        (st_knjig,) = conn.execute(sql).fetchone()
+        return st_knjig
+
+    @staticmethod
+    def seznam_knjig():
+        knjige = []
+        sql = 'SELECT naslov, st_strani FROM knjiga'
+        for naslov, st_strani in conn.execute(sql):
+            knjige.append(naslov)
+        return knjige
+
+    @staticmethod
+    def poisci_knjigo(niz):
+        sql = 'SELECT naslov FROM knjiga WHERE naslov LIKE ?'
+        for naslov in conn.execute(sql, ['%' + niz + '%']):
+            yield Knjiga(naslov = naslov)
+
