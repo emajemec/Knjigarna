@@ -3,7 +3,7 @@
 --
 -- Text encoding used: UTF-8
 --
-PRAGMA foreign_keys = off;
+--PRAGMA foreign_keys = off;
 BEGIN TRANSACTION;
 
 -- Table: avtorji
@@ -49,7 +49,6 @@ CREATE TABLE pripada_zanr (
 );
 
 
-
 -- Table: zalozba
 DROP TABLE IF EXISTS zalozba;
 
@@ -70,4 +69,4 @@ CREATE TABLE zanr (
 
 
 COMMIT TRANSACTION;
-PRAGMA foreign_keys = on;
+--PRAGMA foreign_keys = on;

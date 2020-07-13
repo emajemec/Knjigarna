@@ -115,7 +115,7 @@ class Knjiga:
                 GROUP BY SUBSTR(naslov, 1, 1);"""
         for crka in conn.execute(sql):
             tab.append(crka[0])
-        return tab
+        return tab[0:len(tab)-5]
 
     @staticmethod
     def stevilo_knjig():
