@@ -1,5 +1,5 @@
 
-from pomozne_funkcije import Seznam
+
 import baza
 import sqlite3
 from geslo import sifriraj_geslo, preveri_geslo

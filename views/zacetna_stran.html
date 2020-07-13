@@ -1,5 +1,9 @@
-<h1>MATEMATIČNI KNJIGOLJUB</h1>
-<div>
+% rebase('osnova.html')
+<!DOCTYPE html>
+<html>
+    <body style="background-color:darksalmon;">
+<h1 style="color:dimgrey; font-family:verdana; text-align:center; font-size:300%;">MATEMATIČNI KNJIGOLJUB</h1>
+<div style=" text-align:center;">
     % if ime:
         Prijavljen uporabnik: {{ime}}
         (<a href="/odjava/">odjava</a>)
@@ -20,16 +24,22 @@
         <div class="control">
             <button class="button">Išči!</button>
         </div>
+
 </form>
-<p>Število vseh knjig je {{st_knjig}}.</p>
+<pre style="background-color:darksalmon; font-size:150%">
+
+Knjige po črkah: 
+</pre>
 <ul>
     % for crka in znaki:
-    <li>
+    <li style="background-color:darksalmon; font-size:150%">
         Knjige, ki se začnejo s črko
         <a href="/crke/{{crka}}/">{{crka}}</a>
     </li>
     % end
 </ul>
+</body>
+</html>
 
 
 
