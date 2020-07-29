@@ -67,6 +67,16 @@ CREATE TABLE zanr (
     nadzanr INTEGER REFERENCES zanr (id) 
 );
 
+DROP TABLE IF EXISTS uporabnik;
+
+CREATE TABLE uporabnik (
+    id        INTEGER PRIMARY KEY,
+    ime       TEXT NOT NULL UNIQUE,
+    zgostitev TEXT NOT NULL,
+    sol       TEXT NOT NULL  
+);
+
+
 
 COMMIT TRANSACTION;
 --PRAGMA foreign_keys = on;
